@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screenMargin">16dp</dimen>
+    <dimen name="viewBarMargin">8dp</dimen>
+    <dimen name="viewBarHeight">1dp</dimen>
+    <dimen name="textViewMargin">8dp</dimen>
+    <dimen name="mediumTextSize">16sp</dimen>
+    <dimen name="buttonTopMargin">24dp</dimen>
+</resources>
