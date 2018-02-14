@@ -1,5 +1,6 @@
 package com.example.android.collatzconjecturepathcruncher;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
     BigInteger workingSeed=BigInteger.ONE;
     boolean run;
 
+    int temp =0;
+
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        longestPathDisplay = (TextView) findViewById(R.id.longest_path);
+        longestPathDisplay = findViewById(R.id.longest_path);
         longestPathSeedDisplay = findViewById(R.id.longest_path_seed);
         currentSeedDisplay = findViewById(R.id.current_seed_display);
         startingNumberDisplay = findViewById(R.id.starting_number_display);
@@ -37,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
         longestPathDisplay.setText(getString(R.string.longest_path_display,longestPath));
         longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display,longestPathSeed));
         currentSeedDisplay.setText(getString(R.string.current_seed_display,currentSeed));
+
+        mHandler = new Handler();
+        startRepeatingTask();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        stopRepeatingTask();
     }
 
     public void startCrunching(View view){
@@ -55,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
                 if(currentPath>longestPath){
                     longestPath=currentPath;
                     longestPathSeed=currentSeed;
-                    updateScreen();
                 }
                 currentSeed= currentSeed.add(BigInteger.ONE);
                 workingSeed=currentSeed;
@@ -74,12 +87,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void updateScreen(){
+    public void updateScreen() {
 
-        longestPathDisplay.setText(getString(R.string.longest_path_display,longestPath));
-        longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display,longestPathSeed));
-        currentSeedDisplay.setText(getString(R.string.current_seed_display,currentSeed));
+        //longestPathDisplay.setText(getString(R.string.longest_path_display, longestPath));
+        //longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display, longestPathSeed));
+        //currentSeedDisplay.setText(getString(R.string.current_seed_display, currentSeed));
 
+        longestPathDisplay.setText(getString(R.string.longest_path_display, temp));
+        longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display, temp));
+        currentSeedDisplay.setText(getString(R.string.current_seed_display, temp));
+        temp++;
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try{
+                updateScreen();
+            }finally {
+                mHandler.postDelayed(mStatusChecker,5000);
+            }
+        }
+    };
+
+    void startRepeatingTask(){
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
     }
 
 }
