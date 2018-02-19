@@ -72,13 +72,28 @@
             android:textSize="@dimen/mediumTextSize"
             android:layout_margin="@dimen/textViewMargin"/>
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_text"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/buttonTopMargin"
-            android:onClick="startCrunching"/>
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_button_text"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/buttonTopMargin"
+                android:onClick="startCrunchingRequest"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stop_button_text"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/buttonTopMargin"
+                android:onClick="stopCrunchingRequest"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

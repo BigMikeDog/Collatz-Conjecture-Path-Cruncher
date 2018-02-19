@@ -23,9 +23,8 @@ public class MainActivity extends AppCompatActivity {
     BigInteger currentSeed=BigInteger.ZERO;
     int currentPath=0;
     BigInteger workingSeed=BigInteger.ONE;
-    boolean run;
 
-    int temp =0;
+    //int temp =0;
 
     private Handler mHandler;
 
@@ -51,19 +50,50 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy(){
         super.onDestroy();
         stopRepeatingTask();
+        stopCrunching();
     }
 
-    public void startCrunching(View view){
-
+    public void startCrunchingRequest(View view){
         String value = startingNumberDisplay.getText().toString();
         currentSeed = new BigInteger(value);
-
         workingSeed=currentSeed;
 
-        run=true;
+        mCruncher.run();
+    }
 
-        while(run){
+    public void stopCrunchingRequest(View view){
+        stopCrunching();
+    }
 
+    public void updateScreen() {
+
+        longestPathDisplay.setText(getString(R.string.longest_path_display, longestPath));
+        longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display, longestPathSeed));
+        currentSeedDisplay.setText(getString(R.string.current_seed_display, currentSeed));
+
+        //longestPathDisplay.setText(getString(R.string.longest_path_display, temp));
+        //longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display, temp));
+        //currentSeedDisplay.setText(getString(R.string.current_seed_display, temp));
+        //Log.d("update","requested screen update. Temp currently: "+temp);
+        //temp++;
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try{
+                updateScreen();
+                //Log.d("repeat","Tried Updating Screen");
+            }finally {
+                mHandler.postDelayed(mStatusChecker,1750);
+            }
+        }
+    };
+
+    Runnable mCruncher = new Runnable(){
+
+        @Override
+        public void run(){
             if(workingSeed.compareTo(BigInteger.ONE)==0){
 
                 if(currentPath>longestPath){
@@ -80,33 +110,12 @@ public class MainActivity extends AppCompatActivity {
             if (workingSeed.mod(new BigInteger("2")).compareTo(BigInteger.ZERO)==0){
                 workingSeed=workingSeed.divide(new BigInteger("2"));
             }else{
+
                 workingSeed=(workingSeed.multiply(new BigInteger("3"))).add(BigInteger.ONE);
             }
             currentPath++;
-        }
 
-    }
-
-    public void updateScreen() {
-
-        //longestPathDisplay.setText(getString(R.string.longest_path_display, longestPath));
-        //longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display, longestPathSeed));
-        //currentSeedDisplay.setText(getString(R.string.current_seed_display, currentSeed));
-
-        longestPathDisplay.setText(getString(R.string.longest_path_display, temp));
-        longestPathSeedDisplay.setText(getString(R.string.longest_path_seed_display, temp));
-        currentSeedDisplay.setText(getString(R.string.current_seed_display, temp));
-        temp++;
-    }
-
-    Runnable mStatusChecker = new Runnable() {
-        @Override
-        public void run() {
-            try{
-                updateScreen();
-            }finally {
-                mHandler.postDelayed(mStatusChecker,5000);
-            }
+            mHandler.post(mCruncher);
         }
     };
 
@@ -118,4 +127,7 @@ public class MainActivity extends AppCompatActivity {
         mHandler.removeCallbacks(mStatusChecker);
     }
 
+    void stopCrunching(){
+        mHandler.removeCallbacks(mCruncher);
+    }
 }
